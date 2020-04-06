@@ -153,12 +153,8 @@ def test_plot_trace(models, kwargs):
     assert axes.shape
 
 
-@pytest.mark.parametrize(
-    "compact", [True, False],
-)
-@pytest.mark.parametrize(
-    "combined", [True, False],
-)
+@pytest.mark.parametrize("compact", [True, False])
+@pytest.mark.parametrize("combined", [True, False])
 def test_plot_trace_legend(compact, combined):
     idata = load_arviz_data("rugby")
     axes = plot_trace(
@@ -449,6 +445,16 @@ def test_plot_pair_divergences_warning(has_sample_stats):
     with pytest.warns(UserWarning):
         ax = plot_pair(data, divergences=True)
     assert np.all(ax)
+
+
+@pytest.mark.parametrize(
+    "kwargs", [{}, {"diagonal": True}, {"diagonal": True, "var_names": ["mu", "tau"]}]
+)
+def test_plot_pair_overlaid(models, kwargs):
+    ax = plot_pair(models.model_1, **kwargs)
+    ax2 = plot_pair(models.model_2, ax=ax, **kwargs)
+    assert ax is ax2
+    assert ax.shape
 
 
 @pytest.mark.parametrize("kind", ["kde", "cumulative", "scatter"])
